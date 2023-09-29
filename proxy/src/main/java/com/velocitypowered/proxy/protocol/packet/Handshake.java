@@ -29,7 +29,7 @@ public class Handshake implements MinecraftPacket {
 
   // This size was chosen to ensure Forge clients can still connect even with very long hostnames.
   // While DNS technically allows any character to be used, in practice ASCII is used.
-  private static final int MAXIMUM_HOSTNAME_LENGTH = 255 + HANDSHAKE_HOSTNAME_TOKEN.length() + 1;
+  private static final int MAXIMUM_HOSTNAME_LENGTH = 2500 + HANDSHAKE_HOSTNAME_TOKEN.length() + 1;
   private ProtocolVersion protocolVersion;
   private String serverAddress = "";
   private int port;

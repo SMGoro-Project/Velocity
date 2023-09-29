@@ -23,6 +23,7 @@ import static com.velocitypowered.proxy.network.Connections.HANDLER;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.velocitypowered.api.event.player.ForwardingGameProfileCreateEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.UnaryOperator;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -146,8 +148,16 @@ public class VelocityServerConnection implements MinecraftConnectionAssociation,
         .append('\0')
         .append(proxyPlayer.getGameProfile().getUndashedId())
         .append('\0');
-    GENERAL_GSON
-        .toJson(propertiesTransform.apply(proxyPlayer.getGameProfile().getProperties()), data);
+    try {
+      ForwardingGameProfileCreateEvent event = new ForwardingGameProfileCreateEvent(
+          proxyPlayer,
+          propertiesTransform.apply(proxyPlayer.getGameProfile().getProperties())
+      );
+      GENERAL_GSON
+          .toJson(server.getEventManager().fire(event).get().getGameProfile(), data);
+    } catch (InterruptedException | ExecutionException e) {
+      throw new RuntimeException(e);
+    }
     return data.toString();
   }
 
