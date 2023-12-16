@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.velocitypowered.api.network.ProtocolVersion;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import net.kyori.adventure.builder.AbstractBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +31,12 @@ public final class PingOptions {
   public static final PingOptions DEFAULT = PingOptions.builder().build();
   private final ProtocolVersion protocolVersion;
   private final long timeout;
+  private final String host;
 
   private PingOptions(final Builder builder) {
     this.protocolVersion = builder.protocolVersion;
     this.timeout = builder.timeout;
+    this.host = builder.host;
   }
 
   /**
@@ -52,6 +55,15 @@ public final class PingOptions {
    */
   public long getTimeout() {
     return this.timeout;
+  }
+
+  /**
+   * Gets the host to ping, if present.
+   *
+   * @return an {@link Optional} containing the host to send, or empty if not set
+   */
+  public Optional<String> getHost() {
+    return Optional.ofNullable(host);
   }
 
   /**
@@ -97,6 +109,7 @@ public final class PingOptions {
   public static final class Builder implements AbstractBuilder<PingOptions> {
     private ProtocolVersion protocolVersion = ProtocolVersion.UNKNOWN;
     private long timeout = 0;
+    private String host = null;
 
     private Builder() {
     }
@@ -144,6 +157,26 @@ public final class PingOptions {
       checkNotNull(timeunit, "timeunit cannot be null");
       this.timeout = timeunit.toMillis(time);
       return this;
+    }
+
+    /**
+     * Sets the host to send. This is an optional field and can be used to specify the host to ping.
+     *
+     * @param host the host to send
+     * @return this builder
+     */
+    public Builder host(final String host) {
+      this.host = host;
+      return this;
+    }
+
+    /**
+     * Gets the host to send, if present.
+     *
+     * @return an {@link Optional} containing the host to send, or empty if not set
+     */
+    public Optional<String> host() {
+      return Optional.ofNullable(host);
     }
 
     /**
