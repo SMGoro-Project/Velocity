@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Velocity Contributors
+ * Copyright (C) 2018-2024 Velocity Contributors
  *
  * The Velocity API is licensed under the terms of the MIT License. For more details,
  * reference the LICENSE file in the api top-level directory.
@@ -10,36 +10,27 @@ package com.velocitypowered.api.event.player;
 import com.velocitypowered.api.event.annotation.AwaitingEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import com.velocitypowered.api.util.GameProfile;
-import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+
 /**
- * This event is fired after the {@link com.velocitypowered.api.event.player.ServerPreConnectEvent}
- * in order to set up the game profile for the user. This can be used to configure a custom profile
- * for a user, i.e. skin replacement.
+ * This event is fired after the {@link com.velocitypowered.api.event.player.ForwardingGameProfileCreateEvent}.
  */
-
 @AwaitingEvent
-public class ForwardingGameProfileCreateEvent {
+public class HandshakeDataCreateEvent {
   private final Player player;
-
   private final RegisteredServer previousServer;
   private final RegisteredServer nextServer;
-  private List<GameProfile.Property> gameProfile;
+  private String data;
 
   /**
-   * Creates the ServerPreConnectEvent.
-   *
-   * @param player the player who is connecting to a server
-   * @param nextServer the server the player was trying to connect to
-   * @param previousServer the server the player is connected to
+   * Creates the HandshakeDataCreateEvent.
    */
-  public ForwardingGameProfileCreateEvent(Player player, RegisteredServer previousServer, RegisteredServer nextServer,  List<GameProfile.Property> gameProfile) {
+  public HandshakeDataCreateEvent(Player player, RegisteredServer previousServer, RegisteredServer nextServer, String data) {
     this.player = player;
     this.previousServer = previousServer;
     this.nextServer = nextServer;
-    this.gameProfile = gameProfile;
+    this.data = data;
   }
 
   /**
@@ -65,13 +56,12 @@ public class ForwardingGameProfileCreateEvent {
     return previousServer;
   }
 
-
-  public void setGameProfile(List<GameProfile.Property> gameProfile) {
-    this.gameProfile = gameProfile;
+  public String getData() {
+    return data;
   }
 
-  public List<GameProfile.Property> getGameProfile() {
-    return gameProfile;
+  public void setData(String data) {
+    this.data = data;
   }
 
   public Player getPlayer() {
